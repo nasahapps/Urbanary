@@ -12,7 +12,8 @@ class UrbanDictionaryApi(private val httpClient: HttpClient) {
     private val apiKey = "b314e1eff2msh2bf82b59ac63fc3p1b6ccejsn3e8de8eec9c4"
 
     suspend fun searchDefinitions(query: String?): List<Definition> = withContext(Dispatchers.IO) {
-        val url = "$baseUrl?term=$query"
+        val searchQuery = if (!query.isNullOrBlank()) query else ""
+        val url = "$baseUrl?term=$searchQuery"
         val headers = listOf(
             Pair("x-rapidapi-host", apiHost),
             Pair("x-rapidapi-key", apiKey)

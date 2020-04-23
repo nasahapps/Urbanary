@@ -1,7 +1,8 @@
-package com.nasahapps.urbanary
+package com.nasahapps.urbanary.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.nasahapps.urbanary.R
 
 class MainActivity : AppCompatActivity() {
     
