@@ -1,4 +1,4 @@
-package com.nasahapps.urbanary.model
+package com.nasahapps.urbanary.mock
 
 val MOCK_SEARCH_RESPONSE = """
     {

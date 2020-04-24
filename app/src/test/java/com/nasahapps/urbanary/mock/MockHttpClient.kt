@@ -1,8 +1,8 @@
-package com.nasahapps.urbanary.network
+package com.nasahapps.urbanary.mock
 
 import com.google.gson.Gson
-import com.nasahapps.urbanary.model.MOCK_SEARCH_RESPONSE
 import com.nasahapps.urbanary.model.SearchResponse
+import com.nasahapps.urbanary.network.HttpClient
 
 class MockHttpClient : HttpClient {
 

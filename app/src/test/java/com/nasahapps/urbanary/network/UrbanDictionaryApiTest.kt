@@ -1,5 +1,6 @@
 package com.nasahapps.urbanary.network
 
+import com.nasahapps.urbanary.mock.MockHttpClient
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Before
