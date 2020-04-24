@@ -7,16 +7,14 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [Config.OLDEST_SDK])
 class MainViewModelTest {
 
     @get:Rule
-    val executorRule = InstantTaskExecutorRule()
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val coroutinesTestRule = CoroutinesTestRule()
 
     lateinit var viewModel: MainViewModel
     val mockRepository = object : Repository {
@@ -38,7 +36,7 @@ class MainViewModelTest {
     fun searchingForDefinitionsWithValidQuery__shouldReturnResults() {
         viewModel.getDefinitions("something")
         Assert.assertEquals(
-            "ViewState was not LIST", MainViewModel.ViewState.LIST,
+            "ViewState was incorrect", MainViewModel.ViewState.LIST,
             viewModel.viewState.value
         )
     }
@@ -47,7 +45,7 @@ class MainViewModelTest {
     fun searchingForNothing__shouldDoNothing() {
         viewModel.getDefinitions(null)
         Assert.assertEquals(
-            "ViewState was not INITIAL", MainViewModel.ViewState.INITIAL,
+            "ViewState was incorrect", MainViewModel.ViewState.INITIAL,
             viewModel.viewState.value
         )
     }
@@ -56,7 +54,7 @@ class MainViewModelTest {
     fun searchingForDefinitionsWithInvalidQuery__shouldReturnNoResults() {
         viewModel.getDefinitions("empty")
         Assert.assertEquals(
-            "ViewState was not EMPTY", MainViewModel.ViewState.EMPTY,
+            "ViewState was incorrect", MainViewModel.ViewState.EMPTY,
             viewModel.viewState.value
         )
     }
@@ -65,7 +63,7 @@ class MainViewModelTest {
     fun errorDuringSearch__shouldHaveErrorViewState() {
         viewModel.getDefinitions("error")
         Assert.assertEquals(
-            "ViewState was not ERROR", MainViewModel.ViewState.ERROR,
+            "ViewState was incorrect", MainViewModel.ViewState.ERROR,
             viewModel.viewState.value
         )
     }
