@@ -6,14 +6,14 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class UrbanDictionaryApiTest {
+class RemoteDataSourceTest {
 
-    lateinit var api: UrbanDictionaryApi
+    lateinit var api: RemoteDataSource
 
     @Before
     fun setup() {
         val client = MockHttpClient()
-        api = UrbanDictionaryApi(client)
+        api = RemoteDataSource(client)
     }
 
     @Test

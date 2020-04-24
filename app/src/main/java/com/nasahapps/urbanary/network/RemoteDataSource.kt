@@ -5,7 +5,7 @@ import com.nasahapps.urbanary.model.SearchResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class UrbanDictionaryApi(private val httpClient: HttpClient) {
+class RemoteDataSource(private val httpClient: HttpClient) {
 
     private val baseUrl = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
     private val apiHost = "mashape-community-urban-dictionary.p.rapidapi.com"
@@ -18,7 +18,7 @@ class UrbanDictionaryApi(private val httpClient: HttpClient) {
             Pair("x-rapidapi-host", apiHost),
             Pair("x-rapidapi-key", apiKey)
         )
-        val response: SearchResponse = httpClient.get(url, headers)
+        val response = httpClient.get(url, headers, SearchResponse::class.java)
         response.list
     }
 

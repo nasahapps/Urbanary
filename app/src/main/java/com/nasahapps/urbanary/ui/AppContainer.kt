@@ -2,16 +2,16 @@ package com.nasahapps.urbanary.ui
 
 import com.nasahapps.urbanary.network.HttpClient
 import com.nasahapps.urbanary.network.HttpClientImpl
-import com.nasahapps.urbanary.network.UrbanDictionaryApi
+import com.nasahapps.urbanary.network.RemoteDataSource
 import com.nasahapps.urbanary.repository.Repository
 import com.nasahapps.urbanary.repository.RepositoryImpl
 
-object AppContainer {
+open class AppContainer {
 
-    private val httpClient: HttpClient = HttpClientImpl()
-    private val urbanDictionaryApi: UrbanDictionaryApi = UrbanDictionaryApi(httpClient)
-    private val repository: Repository = RepositoryImpl(urbanDictionaryApi)
+    protected open val httpClient: HttpClient = HttpClientImpl()
+    protected open val remoteDataSource: RemoteDataSource = RemoteDataSource(httpClient)
+    protected open val repository: Repository = RepositoryImpl(remoteDataSource)
 
-    val mainViewModelFactory = MainViewModelFactory(repository)
+    open val mainViewModelFactory = MainViewModelFactory(repository)
 
 }

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/wordText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="wat" />
+
+    <TextView
+        android:id="@+id/definitionText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/wordText"
+        tools:text="The only proper response to something that makes absolutely no sense." />
+
+    <TextView
+        android:id="@+id/thumbsUpCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:drawableStart="@drawable/ic_thumb_up"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/definitionText"
+        tools:text="3679" />
+
+    <View
+        android:id="@+id/thumbsBorder"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:background="?attr/colorOnBackground"
+        app:layout_constraintBottom_toBottomOf="@id/thumbsUpCountText"
+        app:layout_constraintStart_toEndOf="@id/thumbsUpCountText"
+        app:layout_constraintTop_toTopOf="@id/thumbsUpCountText" />
+
+    <TextView
+        android:id="@+id/thumbsDownCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:drawableStart="@drawable/ic_thumb_down"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        app:layout_constraintBaseline_toBaselineOf="@id/thumbsUpCountText"
+        app:layout_constraintStart_toEndOf="@id/thumbsBorder"
+        tools:text="425" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

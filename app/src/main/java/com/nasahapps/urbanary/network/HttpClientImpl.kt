@@ -1,7 +1,6 @@
 package com.nasahapps.urbanary.network
 
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -11,7 +10,11 @@ class HttpClientImpl : HttpClient {
 
     private val client = OkHttpClient()
 
-    override suspend fun <T> get(url: String, headers: List<Pair<String, String>>) =
+    override suspend fun <T> get(
+        url: String,
+        headers: List<Pair<String, String>>,
+        responseClass: Class<T>
+    ) =
         withContext(Dispatchers.IO) {
             val request = Request.Builder()
                 .url(url)
@@ -23,8 +26,7 @@ class HttpClientImpl : HttpClient {
                 .build()
             val response = client.newCall(request).execute()
             val json = response.body?.string()
-            val type = object : TypeToken<T>() {}.type
-            Gson().fromJson<T>(json, type)
+            Gson().fromJson(json, responseClass)
         }
 
 }
