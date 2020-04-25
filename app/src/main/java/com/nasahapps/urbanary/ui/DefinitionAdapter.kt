@@ -24,7 +24,7 @@ class DefinitionAdapter(private val definitions: List<Definition>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val definition = definitions[position]
         holder.itemView.wordText.text = definition.word
-        holder.itemView.definitionText.text = definition.definition
+        holder.itemView.definitionText.text = definition.definition?.replace(Regex("[\\[\\]]"), "")
         holder.itemView.thumbsUpCountText.text = definition.thumbsUp.toString()
         holder.itemView.thumbsDownCountText.text = definition.thumbsDown.toString()
     }

@@ -27,16 +27,25 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         ERROR
     }
 
-    enum class Sort {
-        DEFAULT,
-        THUMBS_UP,
-        THUMBS_DOWN
+    enum class Sort(val readableName: String) {
+        DEFAULT("Default"),
+        THUMBS_UP("Most Thumbs Up"),
+        THUMBS_DOWN("Most Thumbs Down")
     }
 
     val viewState = MutableLiveData(ViewState.INITIAL)
 
     var sort = Sort.DEFAULT
+        set(value) {
+            if (field != value) {
+                field = value
+                definitions = sortDefinitions()
+                // Toggle a refresh of the view
+                viewState.value = viewState.value
+            }
+        }
     var definitions = listOf<Definition>()
+    private var originalDefinitions = listOf<Definition>()
     var searchQuery: String? = null
 
     fun getDefinitions(query: String?) {
@@ -45,7 +54,8 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             viewState.value = ViewState.LOADING
             viewModelScope.launch {
                 try {
-                    definitions = repository.searchDefinitions(query)
+                    originalDefinitions = repository.searchDefinitions(query)
+                    definitions = sortDefinitions()
                     if (definitions.isNotEmpty()) {
                         viewState.value = ViewState.LIST
                     } else {
@@ -58,6 +68,14 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    private fun sortDefinitions(): List<Definition> {
+        return when (sort) {
+            Sort.THUMBS_UP -> originalDefinitions.sortedByDescending { it.thumbsUp }
+            Sort.THUMBS_DOWN -> originalDefinitions.sortedByDescending { it.thumbsDown }
+            Sort.DEFAULT -> originalDefinitions
         }
     }
 

@@ -7,11 +7,15 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.core.view.marginTop
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.nasahapps.urbanary.R
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -36,10 +40,19 @@ class MainActivity : AppCompatActivity() {
         recyclerView?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         recyclerView?.addOnScrollListener(onScrollListener)
 
-        searchEditText?.setOnEditorActionListener { v, actionId, event ->
-            viewModel.getDefinitions(searchEditText?.text?.toString())
+        searchTextField?.editText?.setOnEditorActionListener { v, actionId, event ->
+            viewModel.getDefinitions(searchTextField?.editText?.text?.toString())
             hideKeyboard()
+            searchTextField?.clearFocus()
             true
+        }
+        searchTextField?.setEndIconOnClickListener {
+            showSortChangeDialog()
+        }
+
+        appBar?.doOnLayout {
+            // Add additional top padding to the RecyclerView so content can scroll under the search bar
+            recyclerView?.updatePadding(top = it.height + it.marginTop)
         }
 
         viewModel.viewState.observe(this, Observer { state ->
@@ -72,6 +85,8 @@ class MainActivity : AppCompatActivity() {
             views.remove(viewToMakeVisible)
             views.forEach { it.isVisible = false }
             viewToMakeVisible?.isVisible = true
+
+            searchTextField?.isEndIconVisible = state == MainViewModel.ViewState.LIST
         })
     }
 
@@ -86,4 +101,27 @@ class MainActivity : AppCompatActivity() {
             imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
+
+    fun showSortChangeDialog() {
+        val sortChoices = MainViewModel.Sort
+            .values()
+            .map { it.readableName }
+            .toTypedArray()
+        val currentChoiceIndex = MainViewModel.Sort
+            .values()
+            .indexOf(viewModel.sort)
+
+        var choice = currentChoiceIndex
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Sort by...")
+            .setSingleChoiceItems(sortChoices, currentChoiceIndex) { dialog, which ->
+                choice = which
+            }
+            .setPositiveButton("Ok") { _, _ ->
+                viewModel.sort = MainViewModel.Sort.values()[choice]
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
 }
