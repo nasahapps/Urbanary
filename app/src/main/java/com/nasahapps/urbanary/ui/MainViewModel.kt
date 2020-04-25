@@ -1,23 +1,32 @@
 package com.nasahapps.urbanary.ui
 
+import android.os.Bundle
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.savedstate.SavedStateRegistryOwner
 import com.nasahapps.urbanary.model.Definition
 import com.nasahapps.urbanary.repository.Repository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
-class MainViewModelFactory(private val repository: Repository) :
-    ViewModelProvider.NewInstanceFactory() {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return MainViewModel(repository) as T
+class MainViewModelFactory(private val repository: Repository,
+                           owner: SavedStateRegistryOwner,
+                           defaultArgs: Bundle? = null) :
+    AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+
+    override fun <T : ViewModel?> create(key: String,
+                                         modelClass: Class<T>,
+                                         handle: SavedStateHandle): T {
+        return MainViewModel(repository, handle) as T
     }
+
 }
 
-class MainViewModel(private val repository: Repository) : ViewModel() {
+class MainViewModel(private val repository: Repository,
+                    private val state: SavedStateHandle) : ViewModel() {
 
     enum class ViewState {
         INITIAL,
@@ -33,20 +42,41 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         THUMBS_DOWN("Most Thumbs Down")
     }
 
-    val viewState = MutableLiveData(ViewState.INITIAL)
+    companion object {
+        private val STATE_SEARCH_QUERY = "query"
+        private val STATE_SORT = "sort"
+        private val STATE_VIEW_STATE = "viewState"
+        private val STATE_DEFINITIONS = "definitions"
+    }
 
-    var sort = Sort.DEFAULT
+    val viewState = state.getLiveData(STATE_VIEW_STATE, ViewState.INITIAL)
+
+    var sort: Sort = Sort.DEFAULT
+        get() = state[STATE_SORT] ?: Sort.DEFAULT
         set(value) {
             if (field != value) {
-                field = value
+                state[STATE_SORT] = value
                 definitions = sortDefinitions()
                 // Toggle a refresh of the view
                 viewState.value = viewState.value
             }
         }
     var definitions = listOf<Definition>()
-    private var originalDefinitions = listOf<Definition>()
-    var searchQuery: String? = null
+    private var originalDefinitions: List<Definition>
+        get() = state[STATE_DEFINITIONS] ?: listOf()
+        set(value) {
+            state[STATE_DEFINITIONS] = value
+            definitions = sortDefinitions()
+        }
+    var searchQuery: String?
+        get() = state[STATE_SEARCH_QUERY]
+        set(value) {
+            state[STATE_SEARCH_QUERY] = value
+        }
+
+    init {
+        definitions = sortDefinitions()
+    }
 
     fun getDefinitions(query: String?) {
         if (!query.isNullOrBlank()) {
@@ -55,7 +85,6 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             viewModelScope.launch {
                 try {
                     originalDefinitions = repository.searchDefinitions(query)
-                    definitions = sortDefinitions()
                     if (definitions.isNotEmpty()) {
                         viewState.value = ViewState.LIST
                     } else {

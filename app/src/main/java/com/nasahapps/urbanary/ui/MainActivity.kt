@@ -22,7 +22,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     val viewModel: MainViewModel by viewModels {
-        (application as MainApplication).appContainer.mainViewModelFactory
+        val repository = (application as MainApplication).appContainer.repository
+        MainViewModelFactory(repository, this)
     }
     val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView?.layoutManager = LinearLayoutManager(this)
         recyclerView?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         recyclerView?.addOnScrollListener(onScrollListener)
+        setRecyclerViewAdapter()
 
         searchTextField?.editText?.setOnEditorActionListener { v, actionId, event ->
             viewModel.getDefinitions(searchTextField?.editText?.text?.toString())
@@ -67,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                     progressBar
                 }
                 MainViewModel.ViewState.LIST -> {
-                    recyclerView?.adapter = DefinitionAdapter(viewModel.definitions)
+                    setRecyclerViewAdapter()
                     recyclerView
                 }
                 MainViewModel.ViewState.EMPTY -> {
@@ -122,6 +124,10 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    fun setRecyclerViewAdapter() {
+        recyclerView?.adapter = DefinitionAdapter(viewModel.definitions)
     }
 
 }

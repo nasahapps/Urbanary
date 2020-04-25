@@ -10,8 +10,8 @@ open class AppContainer {
 
     protected open val httpClient: HttpClient = HttpClientImpl()
     protected open val remoteDataSource: RemoteDataSource = RemoteDataSource(httpClient)
-    protected open val repository: Repository = RepositoryImpl(remoteDataSource)
+    open val repository: Repository = RepositoryImpl(remoteDataSource)
 
-    open val mainViewModelFactory = MainViewModelFactory(repository)
+//    open val mainViewModelFactory = MainViewModelFactory(repository)
 
 }
