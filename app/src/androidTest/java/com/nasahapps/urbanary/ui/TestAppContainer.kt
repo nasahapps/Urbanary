@@ -9,6 +9,4 @@ class TestAppContainer : AppContainer() {
             return emptyList()
         }
     }
-
-    override val mainViewModelFactory = MainViewModelFactory(repository)
 }

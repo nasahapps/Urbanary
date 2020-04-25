@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -58,37 +58,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.viewState.observe(this, Observer { state ->
-            val views =
-                mutableListOf(initialLayout, progressBar, emptyText, errorText, recyclerView)
-
-            val viewToMakeVisible: View? = when (state) {
-                MainViewModel.ViewState.INITIAL -> {
-                    initialLayout
-                }
-                MainViewModel.ViewState.LOADING -> {
-                    progressBar
-                }
-                MainViewModel.ViewState.LIST -> {
-                    setRecyclerViewAdapter()
-                    recyclerView
-                }
-                MainViewModel.ViewState.EMPTY -> {
-                    emptyText?.text = "Sorry, we couldn't find: ${viewModel.searchQuery}"
-                    emptyText
-                }
-                MainViewModel.ViewState.ERROR -> {
-                    errorText
-                }
-                else -> {
-                    null
-                }
-            }
-
-            views.remove(viewToMakeVisible)
-            views.forEach { it.isVisible = false }
-            viewToMakeVisible?.isVisible = true
-
-            searchTextField?.isEndIconVisible = state == MainViewModel.ViewState.LIST
+            updateViewForState(state)
         })
     }
 
@@ -128,6 +98,36 @@ class MainActivity : AppCompatActivity() {
 
     fun setRecyclerViewAdapter() {
         recyclerView?.adapter = DefinitionAdapter(viewModel.definitions)
+    }
+
+    fun updateViewForState(state: MainViewModel.ViewState) {
+        val views = mutableListOf(initialLayout, progressBar, emptyText, errorText, recyclerView)
+
+        val viewToMakeVisible: View? = when (state) {
+            MainViewModel.ViewState.INITIAL -> {
+                initialLayout
+            }
+            MainViewModel.ViewState.LOADING -> {
+                progressBar
+            }
+            MainViewModel.ViewState.LIST -> {
+                setRecyclerViewAdapter()
+                recyclerView
+            }
+            MainViewModel.ViewState.EMPTY -> {
+                emptyText?.text = "Sorry, we couldn't find: ${viewModel.searchQuery}"
+                emptyText
+            }
+            MainViewModel.ViewState.ERROR -> {
+                errorText
+            }
+        }
+
+        views.remove(viewToMakeVisible)
+        views.forEach { it.isVisible = false }
+        viewToMakeVisible?.isVisible = true
+
+        searchTextField?.isEndIconVisible = state == MainViewModel.ViewState.LIST
     }
 
 }

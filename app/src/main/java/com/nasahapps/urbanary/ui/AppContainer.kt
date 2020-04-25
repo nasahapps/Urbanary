@@ -14,6 +14,4 @@ open class AppContainer {
     protected open val localDataSource: LocalDataSource = LocalDataSource()
     open val repository: Repository = RepositoryImpl(remoteDataSource, localDataSource)
 
-//    open val mainViewModelFactory = MainViewModelFactory(repository)
-
 }
