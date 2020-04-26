@@ -8,8 +8,14 @@ import com.nasahapps.urbanary.repository.Repository
 class MockRepository : Repository {
 
     override suspend fun searchDefinitions(query: String?): List<Definition> {
-        val response = Gson().fromJson(MOCK_SEARCH_RESPONSE, SearchResponse::class.java)
-        return response.list
+        return when (query) {
+            "empty" -> emptyList()
+            "error" -> throw RuntimeException()
+            else -> {
+                val response = Gson().fromJson(MOCK_SEARCH_RESPONSE, SearchResponse::class.java)
+                response.list
+            }
+        }
     }
 
 }

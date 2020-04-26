@@ -1,9 +1,8 @@
 package com.nasahapps.urbanary.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.rule.ActivityTestRule
-import com.nasahapps.urbanary.model.Definition
-import com.nasahapps.urbanary.repository.Repository
+import androidx.lifecycle.SavedStateHandle
+import com.nasahapps.urbanary.mock.MockRepository
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -17,24 +16,12 @@ class MainViewModelTest {
     @get:Rule
     val coroutinesTestRule = CoroutinesTestRule()
 
-    @get:Rule
-    val activityRule = ActivityTestRule(MainActivity::class.java)
-
     lateinit var viewModel: MainViewModel
-    val mockRepository = object : Repository {
-        override suspend fun searchDefinitions(query: String?): List<Definition> {
-            return when (query) {
-                "empty" -> emptyList()
-                "error" -> throw RuntimeException()
-                else -> listOf(Definition())
-            }
-        }
-    }
+    val mockRepository = MockRepository()
 
     @Before
     fun setup() {
-        viewModel = MainViewModelFactory(mockRepository, activityRule.activity)
-            .create(MainViewModel::class.java)
+        viewModel = MainViewModel(mockRepository, SavedStateHandle())
     }
 
     @Test
