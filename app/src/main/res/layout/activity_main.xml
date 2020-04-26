@@ -28,6 +28,7 @@
             app:endIconDrawable="@drawable/ic_sort"
             app:endIconMode="custom"
             app:hintEnabled="false"
+            app:endIconContentDescription="change sort"
             app:startIconDrawable="@drawable/ic_search">
 
             <com.google.android.material.textfield.TextInputEditText
