@@ -8,14 +8,15 @@ import com.nasahapps.urbanary.R
 import com.nasahapps.urbanary.model.Definition
 import kotlinx.android.synthetic.main.list_definition.view.*
 
-class DefinitionAdapter(private val definitions: List<Definition>) :
-    RecyclerView.Adapter<DefinitionAdapter.ViewHolder>() {
+class DefinitionAdapter(
+        private val definitions: List<Definition>
+) : RecyclerView.Adapter<DefinitionAdapter.ViewHolder>() {
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layout =
-            LayoutInflater.from(parent.context).inflate(R.layout.list_definition, parent, false)
+        val layout = LayoutInflater.from(parent.context)
+            .inflate(R.layout.list_definition, parent, false)
         return ViewHolder(layout)
     }
 

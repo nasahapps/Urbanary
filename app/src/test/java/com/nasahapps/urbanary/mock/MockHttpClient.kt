@@ -5,11 +5,9 @@ import com.nasahapps.urbanary.network.HttpClient
 
 class MockHttpClient : HttpClient {
 
-    override suspend fun <T> get(
-        url: String,
-        headers: List<Pair<String, String>>,
-        responseClass: Class<T>
-    ): T {
+    override suspend fun <T> get(url: String,
+                                 headers: List<Pair<String, String>>,
+                                 responseClass: Class<T>): T {
         if (url.startsWith("https://mashape-community-urban-dictionary.p.rapidapi.com/define")) {
             val queryParams = url.substring(url.indexOf("?") + 1)
                 .split("&")

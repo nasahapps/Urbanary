@@ -16,11 +16,11 @@ class LocalDataSource {
         }
     }
 
-    suspend fun saveSearchDefinitions(query: String?, results: List<Definition>) =
-        withContext(Dispatchers.IO) {
-            if (!query.isNullOrBlank()) {
-                searchMap[query] = results
-            }
+    suspend fun saveSearchDefinitions(query: String?,
+                                      results: List<Definition>) = withContext(Dispatchers.IO) {
+        if (!query.isNullOrBlank()) {
+            searchMap[query] = results
         }
+    }
 
 }

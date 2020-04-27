@@ -10,12 +10,15 @@ import androidx.savedstate.SavedStateRegistryOwner
 import com.nasahapps.urbanary.model.Definition
 import com.nasahapps.urbanary.repository.Repository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class MainViewModelFactory(private val repository: Repository,
-                           owner: SavedStateRegistryOwner,
-                           defaultArgs: Bundle? = null) :
-    AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+class MainViewModelFactory(
+        private val repository: Repository,
+        owner: SavedStateRegistryOwner,
+        defaultArgs: Bundle? = null
+) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
 
     override fun <T : ViewModel?> create(key: String,
                                          modelClass: Class<T>,
@@ -62,6 +65,8 @@ class MainViewModel(private val repository: Repository,
             }
         }
     var definitions = listOf<Definition>()
+    // The original, unsorted results returned from the API. Kept as a reference if the user
+    // wants to sort by DEFAULT
     private var originalDefinitions: List<Definition>
         get() = state[STATE_DEFINITIONS] ?: listOf()
         set(value) {
@@ -73,6 +78,7 @@ class MainViewModel(private val repository: Repository,
         set(value) {
             state[STATE_SEARCH_QUERY] = value
         }
+    private var job: Job? = null
 
     init {
         definitions = sortDefinitions()
@@ -80,18 +86,23 @@ class MainViewModel(private val repository: Repository,
 
     fun getDefinitions(query: String?) {
         if (!query.isNullOrBlank()) {
+            // Cancel the current search if one was already ongoing
+            job?.cancel()
+
             searchQuery = query
             viewState.value = ViewState.LOADING
-            viewModelScope.launch {
+            job = viewModelScope.launch {
                 try {
                     originalDefinitions = repository.searchDefinitions(query)
-                    if (definitions.isNotEmpty()) {
-                        viewState.value = ViewState.LIST
-                    } else {
-                        viewState.value = ViewState.EMPTY
+                    if (isActive) {
+                        if (definitions.isNotEmpty()) {
+                            viewState.value = ViewState.LIST
+                        } else {
+                            viewState.value = ViewState.EMPTY
+                        }
                     }
                 } catch (e: Throwable) {
-                    if (e !is CancellationException) {
+                    if (e !is CancellationException && isActive) {
                         Log.e("Urbanary", "Error getting definitions for $searchQuery", e)
                         viewState.value = ViewState.ERROR
                     }

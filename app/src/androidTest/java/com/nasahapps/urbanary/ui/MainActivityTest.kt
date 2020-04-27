@@ -53,10 +53,8 @@ class MainActivityTest {
             .perform(click())
 
         scenarioRule.scenario.onActivity { activity ->
-            Assert.assertEquals(
-                "New sort value does not match", MainViewModel.Sort.THUMBS_UP,
-                activity.viewModel.sort
-            )
+            Assert.assertEquals("New sort value does not match",
+                    MainViewModel.Sort.THUMBS_UP, activity.viewModel.sort)
         }
     }
 
@@ -80,10 +78,8 @@ class MainActivityTest {
             .perform(click())
 
         scenarioRule.scenario.onActivity {
-            Assert.assertEquals(
-                "Sort value changed but shouldn't have", originalSort,
-                it.viewModel.sort
-            )
+            Assert.assertEquals("Sort value changed but shouldn't have", originalSort,
+                    it.viewModel.sort)
         }
     }
 
